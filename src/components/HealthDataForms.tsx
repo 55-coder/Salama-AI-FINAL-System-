@@ -28,10 +28,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
   const [phone, setPhone] = useState('0712345678');
   const [dob, setDob] = useState('1973-05-15');
   const [sex, setSex] = useState<'male' | 'female' | 'other'>('female');
-  
-  const [heightCm, setHeightCm] = useState(165);
-  const [weightKg, setWeightKg] = useState(78);
-  const [bmi, setBmi] = useState(28.7);
 
   const [smoking, setSmoking] = useState<'never' | 'former' | 'smoker' | 'unknown' | 'never_smoked' | 'passive' | 'current_light' | 'current_heavy'>('never_smoked');
   const [diabetes, setDiabetes] = useState(false);
@@ -41,8 +37,12 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
   const [physicalActivity, setPhysicalActivity] = useState<'none' | 'light' | 'moderate' | 'heavy' | 'low' | 'high'>('light');
   const [stressScore, setStressScore] = useState(5);
   const [sleepQuality, setSleepQuality] = useState('Fair');
-  const [takingBpMedication, setTakingBpMedication] = useState(true);
-  const [medicationType, setMedicationType] = useState<'none' | 'beta_blocker' | 'diuretic' | 'ace_inhibitor' | 'other'>('ace_inhibitor');
+  const [cigsPerDay, setCigsPerDay] = useState(0);
+  const [alcoholUse, setAlcoholUse] = useState<'none' | 'moderate' | 'heavy'>('none');
+  const [exerciseFrequency, setExerciseFrequency] = useState('none');
+  const [dietQuality, setDietQuality] = useState('average');
+  const [saltIntake, setSaltIntake] = useState(0);
+  const [sleepDuration, setSleepDuration] = useState(7);
 
   // Extended Biography, Medical & Chronic State (PDF Page 4 Alignment)
   const [workType, setWorkType] = useState('Private Sector Corporate');
@@ -52,15 +52,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
   const [prevalentHypertension, setPrevalentHypertension] = useState(true);
   const [kidneyDisease, setKidneyDisease] = useState(false);
   const [historyCvd, setHistoryCvd] = useState(false);
-
-  // Calculate BMI on height/weight updates
-  useEffect(() => {
-    if (heightCm > 0 && weightKg > 0) {
-      const heightM = heightCm / 100;
-      const computed = parseFloat((weightKg / (heightM * heightM)).toFixed(1));
-      setBmi(computed);
-    }
-  }, [heightCm, weightKg]);
 
   // Loading existing profile and mapping active API telemetry records
   useEffect(() => {
@@ -73,8 +64,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
         if (prof.phone_number) setPhone(prof.phone_number);
         if (prof.date_of_birth) setDob(prof.date_of_birth);
         if (prof.sex) setSex(prof.sex);
-        if (prof.height_cm) setHeightCm(prof.height_cm);
-        if (prof.weight_kg) setWeightKg(prof.weight_kg);
         if (prof.smoking) setSmoking(prof.smoking as any);
         setDiabetes(!!prof.diabetes);
         if (prof.bp_history) setBpHistory(prof.bp_history);
@@ -85,8 +74,12 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
         }
         if (prof.stress_score) setStressScore(prof.stress_score);
         if (prof.sleep_quality) setSleepQuality(prof.sleep_quality);
-        setTakingBpMedication(!!prof.taking_bp_medication);
-        if (prof.medication_type) setMedicationType(prof.medication_type as any);
+        if (prof.cigs_per_day !== undefined) setCigsPerDay(prof.cigs_per_day || 0);
+        if (prof.alcohol_use) setAlcoholUse(prof.alcohol_use);
+        if (prof.exercise_frequency) setExerciseFrequency(prof.exercise_frequency);
+        if (prof.diet_quality) setDietQuality(prof.diet_quality);
+        if (prof.salt_intake !== undefined) setSaltIntake(prof.salt_intake || 0);
+        if (prof.sleep_duration !== undefined) setSleepDuration(prof.sleep_duration || 7);
         
         // Load occupational/biographical additions
         if (prof.work_type) setWorkType(prof.work_type);
@@ -210,19 +203,20 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
         date_of_birth: dob,
         sex,
         age_years: dob ? (new Date().getFullYear() - new Date(dob).getFullYear()) : 52,
-        height_cm: heightCm,
-        weight_kg: weightKg,
-        bmi,
         smoking,
         diabetes,
         bp_history: bpHistory,
         family_history_htn: familyHtn,
         family_history_cvd: familyCvd,
-        taking_bp_medication: takingBpMedication,
-        medication_type: medicationType,
         physical_activity_level: physicalActivity,
         stress_score: stressScore,
         sleep_quality: sleepQuality,
+        cigs_per_day: cigsPerDay,
+        alcohol_use: alcoholUse,
+        exercise_frequency: exerciseFrequency,
+        diet_quality: dietQuality,
+        salt_intake: saltIntake,
+        sleep_duration: sleepDuration,
         work_type: workType,
         education: education,
         heart_disease: heartDisease,
@@ -248,7 +242,7 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
     setSubmitting(true);
     try {
       await SalamaApiService.addBpRecord(user.email, { // The time is already timezone-aware due to toISOString()
-        start_date_time: new Date(bpDateTime).toISOString(),
+        start_date_time: new Date(bpDateTime + 'Z').toISOString(), // Interpret local picker as UTC
         systolic_value: bpSystolic,
         diastolic_value: bpDiastolic,
         body_posture: bpPosture,
@@ -272,7 +266,7 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
     setSubmitting(true);
     try {
       await SalamaApiService.addHrRecord(user.email, { // The time is already timezone-aware due to toISOString()
-        start_date_time: new Date(hrDateTime).toISOString(),
+        start_date_time: new Date(hrDateTime + 'Z').toISOString(), // Interpret local picker as UTC
         heart_rate_value: hrValue,
         body_posture: hrPosture,
         measurement_location: hrLocation,
@@ -520,48 +514,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
               </div>
             </div>
 
-            {/* Anthropometrics & Cardiac Baselines (Page 8) */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <span className="block text-[11px] font-black text-rose-600 tracking-wider uppercase border-b border-rose-50 pb-1.5">
-                2. Biographical & Anthropometrics Baselines
-              </span>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
-                    Height (CM)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={heightCm}
-                    onChange={(e) => setHeightCm(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
-                    Weight (KG)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={weightKg}
-                    onChange={(e) => setWeightKg(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
-                  />
-                </div>
-                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex items-center justify-between">
-                  <div>
-                    <span className="block text-[9px] font-bold text-slate-400 uppercase">Calculated BMI</span>
-                    <span className="text-xl font-extrabold text-slate-800">{bmi}</span>
-                  </div>
-                  <span className="text-xs font-black text-emerald-600 font-mono bg-emerald-50 px-2 py-1 rounded-lg">
-                    BMI: {bmi}
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {/* Behavioral Risk Markers (Page 8 Group 3) */}
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <span className="block text-[11px] font-black text-rose-600 tracking-wider uppercase border-b border-rose-50 pb-1.5">
@@ -589,6 +541,34 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
 
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Average Cigarettes per Day
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={cigsPerDay}
+                    onChange={(e) => setCigsPerDay(parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Alcohol Use level
+                  </label>
+                  <select
+                    value={alcoholUse}
+                    onChange={(e: any) => setAlcoholUse(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold bg-white"
+                  >
+                    <option value="none">None / Teetotaler</option>
+                    <option value="moderate">Moderate Drinker</option>
+                    <option value="heavy">Heavy Drinker</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
                     Diabetes Diagnosed Status
                   </label>
                   <select
@@ -599,6 +579,80 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
                     <option value="no">No Diabetes</option>
                     <option value="yes">Diagnosed Diabetes (Type 1 or 2)</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Blood Pressure History
+                  </label>
+                  <select
+                    value={bpHistory}
+                    onChange={(e: any) => setBpHistory(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold bg-white"
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="prehypertension">Prehypertension</option>
+                    <option value="hypertension">Hypertension</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Exercise Frequency (Weekly)
+                  </label>
+                  <select
+                    value={exerciseFrequency}
+                    onChange={(e) => setExerciseFrequency(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold bg-white"
+                  >
+                    <option value="none">No physical exercise</option>
+                    <option value="1-2 times">1-2 times per week</option>
+                    <option value="3-4 times">3-4 times per week</option>
+                    <option value="daily">Daily activity</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Dietary Nutrition Quality
+                  </label>
+                  <select
+                    value={dietQuality}
+                    onChange={(e) => setDietQuality(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold bg-white"
+                  >
+                    <option value="poor">Poor (High processed / sodium)</option>
+                    <option value="average">Average (Balanced)</option>
+                    <option value="excellent">Excellent (Plant-based / Low fat)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Estimated Salt Intake (Grams)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={saltIntake}
+                    onChange={(e) => setSaltIntake(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Average Sleep Duration (Hours)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="24"
+                    value={sleepDuration}
+                    onChange={(e) => setSleepDuration(parseInt(e.target.value) || 7)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
+                  />
                 </div>
 
                 <div>
@@ -631,6 +685,20 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
                     <option value="Fair">Fair / Intermittent</option>
                     <option value="Poor">Poor</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                    Stress Level Score (1-10)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={stressScore}
+                    onChange={(e) => setStressScore(parseInt(e.target.value) || 5)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold"
+                  />
                 </div>
               </div>
 
@@ -732,47 +800,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
                     </label>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Therapeutics (Page 8 Group 4) */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <span className="block text-[11px] font-black text-rose-600 tracking-wider uppercase border-b border-rose-50 pb-1.5">
-                4. Cardiovascular Therapeutics & Medication
-              </span>
-              <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-4">
-                <div className="flex items-center gap-3">
-                  <input
-                    id="taking-meds-check"
-                    type="checkbox"
-                    checked={takingBpMedication}
-                    onChange={(e) => setTakingBpMedication(e.target.checked)}
-                    className="h-4.5 w-4.5 text-rose-500 focus:ring-rose-400 border-slate-300 rounded cursor-pointer"
-                  />
-                  <label htmlFor="taking-meds-check" className="text-xs font-bold text-slate-700 cursor-pointer select-none">
-                    Currently taking active Blood Pressure medication
-                  </label>
-                </div>
-
-                {takingBpMedication && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
-                        Specific Medication Class
-                      </label>
-                      <select
-                        value={medicationType}
-                        onChange={(e: any) => setMedicationType(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-100 rounded-xl text-xs font-semibold bg-white"
-                      >
-                        <option value="ace_inhibitor">ACE Inhibitor (e.g. Lisinopril)</option>
-                        <option value="beta_blocker">Beta Blocker (e.g. Atenolol)</option>
-                        <option value="diuretic">Diuretic medication</option>
-                        <option value="other">Other High-BP Therapeutics</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 

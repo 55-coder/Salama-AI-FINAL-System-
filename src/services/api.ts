@@ -20,10 +20,6 @@ export interface UserProfile {
   phone_number?: string | null;
   date_of_birth: string;
   sex: 'male' | 'female' | 'other';
-  age_years?: number; // Calculated or manual
-  height_cm: number;
-  weight_kg: number;
-  bmi?: number;
   // Behavioral Risk Markers
   smoking: 'never' | 'former' | 'smoker' | 'unknown' | 'never_smoked' | 'passive' | 'current_light' | 'current_heavy'; 
   diabetes: boolean;
@@ -43,9 +39,6 @@ export interface UserProfile {
   stress_score?: number | null;
   sleep_duration?: number | null;
   sleep_quality?: string | null;
-  // High-BP therapeutics
-  taking_bp_medication: boolean;
-  medication_type?: 'none' | 'beta_blocker' | 'diuretic' | 'ace_inhibitor' | 'other' | null;
   // Matching general config/pdf
   work_type?: string | null;
   education?: 'primary' | 'high_school' | 'undergraduate' | 'graduate' | null;
@@ -238,14 +231,9 @@ export class SalamaDatabase {
         date_of_birth: '1990-01-01',
         sex: 'other',
         age_years: 36,
-        height_cm: 175,
-        weight_kg: 70,
-        bmi: 22.9,
         smoking: 'never_smoked',
         diabetes: false,
         bp_history: 'normal',
-        taking_bp_medication: false,
-        medication_type: 'none',
         physical_activity_level: 'moderate',
         stress_score: 3,
         sleep_quality: 'Good'
@@ -328,9 +316,9 @@ export class SalamaDatabase {
     const isHighBp = latestBp ? (latestBp.systolic_value > 140 || latestBp.diastolic_value > 90) : false;
     const isSmoker = profile.smoking === 'smoker';
     const isDiabetic = profile.diabetes;
-    const weight = profile.weight_kg || 70;
-    const height = profile.height_cm ? (profile.height_cm / 100) : 1.75;
-    const bmi = parseFloat((weight / (height * height)).toFixed(1)) || 22.8;
+    const weight = latestHa?.weight_kg || 70;
+    const height = latestHa?.height_m || 1.75;
+    const bmi = (latestHa && latestHa.weight_kg) ? parseFloat((latestHa.weight_kg / (height * height)).toFixed(1)) : 22.8;
 
     const sysVal = latestBp?.systolic_value || 120;
     const diaVal = latestBp?.diastolic_value || 80;
@@ -912,9 +900,9 @@ export class SalamaApiService {
       const haList = SalamaDatabase.getHealthAssessments(email);
       const latestHa = haList[0];
 
-      const weight = profile.weight_kg || 78;
-      const height = profile.height_cm ? (profile.height_cm / 100) : 1.73;
-      const bmiVal = parseFloat((weight / (height * height)).toFixed(1)) || 26.1;
+      const weight = latestHa?.weight_kg || 78;
+      const height = latestHa?.height_m || 1.73;
+      const bmiVal = (latestHa && latestHa.weight_kg) ? parseFloat((latestHa.weight_kg / (height * height)).toFixed(1)) : 26.1;
 
       const bpVal = latestBp ? `${latestBp.systolic_value}/${latestBp.diastolic_value} mmHg` : '120/80 mmHg';
       const cholVal = latestHa?.total_cholesterol || 195;
@@ -1057,14 +1045,9 @@ export class SalamaApiService {
           date_of_birth: rawProfile.date_of_birth || '1980-01-01',
           sex: rawProfile.sex || p.sex || 'female',
           age_years: rawProfile.age_years || p.age || 40,
-          height_cm: rawProfile.height_cm || 170,
-          weight_kg: rawProfile.weight_kg || 70,
-          bmi: rawProfile.bmi || 24.2,
           smoking: rawProfile.smoking || 'never_smoked',
           diabetes: rawProfile.diabetes ?? false,
           bp_history: rawProfile.bp_history || 'normal',
-          taking_bp_medication: rawProfile.taking_bp_medication ?? false,
-          medication_type: rawProfile.medication_type || 'none',
           physical_activity_level: rawProfile.physical_activity_level || 'moderate',
           stress_score: rawProfile.stress_score || 3,
           sleep_quality: rawProfile.sleep_quality || 'Good'

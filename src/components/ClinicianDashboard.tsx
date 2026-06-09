@@ -379,7 +379,6 @@ export default function ClinicianDashboard({ openAssessmentModal, openBookingMod
               <span className="px-2.5 py-1 bg-slate-100 rounded-lg">Smoking: <b className="text-slate-800 capitalize">{selectedPatient.profile.smoking}</b></span>
               <span className="px-2.5 py-1 bg-slate-100 rounded-lg">Diabetes: <b className="text-slate-800">{selectedPatient.profile.diabetes ? 'Yes' : 'No'}</b></span>
               <span className="px-2.5 py-1 bg-slate-100 rounded-lg">Physical Activity: <b className="text-slate-800 capitalize">{selectedPatient.profile.physical_activity_level || 'Low'}</b></span>
-              <span className="px-2.5 py-1 bg-slate-100 rounded-lg">BMI: <b className="text-slate-800">{selectedPatient.profile.bmi || 28.7}</b></span>
             </div>
 
             {/* Multi-Disease risk indicator list (matching Page 11 bottom panel exactly) */}
