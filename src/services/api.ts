@@ -622,52 +622,33 @@ export class SalamaApiService {
 
   // 1. Auth Endpoint requests
   static async login(email: string, password: string): Promise<User> {
-    try {
-      const formData = new URLSearchParams();
-      formData.append('username', email); // FASTAPI OAuth2 uses username field
-      formData.append('password', password);
+    const formData = new URLSearchParams();
+    formData.append('username', email); // FASTAPI OAuth2 uses username field
+    formData.append('password', password);
 
-      const response = await this.request<{ access_token: string }>('/auth/jwt/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString()
-      });
+    const response = await this.request<{ access_token: string }>('/auth/jwt/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    });
 
-      this.setAuthToken(response.access_token);
-      
-      // Fetch authenticated User object details
-      const userRead = await this.request<User>('/users/me');
-      this.setActiveUser(userRead);
+    this.setAuthToken(response.access_token);
+    
+    // Fetch authenticated User object details
+    const userRead = await this.request<User>('/users/me');
+    this.setActiveUser(userRead);
 
-      return userRead;
-    } catch (e) {
-      console.warn('API Authentication login failed; using robust simulation session.', e);
-      // Perfect Offline Demo Logging Switch
-      const simulatedUser: User = {
-        id: `sim-${Date.now()}`,
-        email,
-        role: email.includes('clinician') || email.includes('doctor') ? 'clinician' : 'patient'
-      };
-      this.setAuthToken(`simulated-token-${Date.now()}`);
-      this.setActiveUser(simulatedUser);
-      return simulatedUser;
-    }
+    return userRead;
   }
 
   static async register(email: string, password: string, role: 'patient' | 'clinician'): Promise<User> {
-    try {
-      const userRead = await this.request<User>('/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ email, password, role })
-      });
-      return userRead;
-    } catch (e) {
-      console.warn('Backend register failed, simulation session created.', e);
-      const simulatedUser: User = { id: `sim-${Date.now()}`, email, role };
-      return simulatedUser;
-    }
+    const userRead = await this.request<User>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, role })
+    });
+    return userRead;
   }
 
   static async logout() {

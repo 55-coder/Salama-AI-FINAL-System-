@@ -15,12 +15,6 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const AVAILABLE_DOCTORS = [
-  { name: 'Dr. Sarah Kimani', specialty: 'Cardiologist', type: 'Virtual' },
-  { name: 'Dr. James Otieno', specialty: 'General Physician', type: 'In-Person' },
-  { name: 'Dr. Mercy Wanjiku', specialty: 'Endocrinologist', type: 'Virtual' }
-];
-
 interface AppointmentsViewProps {
   user: User;
 }
@@ -45,11 +39,26 @@ export default function AppointmentsView({ user }: AppointmentsViewProps) {
 
   useEffect(() => {
     loadAppointments();
-    setClinicians(AVAILABLE_DOCTORS);
-    if (AVAILABLE_DOCTORS.length > 0) {
-      setSelectedDoctor(AVAILABLE_DOCTORS[0]);
-      setAppointmentType(AVAILABLE_DOCTORS[0].type as any || 'Virtual');
-    }
+    const fetchClinicians = async () => {
+      try {
+        const data = await SalamaApiService.getClinicians();
+        const list = Array.isArray(data) ? data : (data.results || data.clinicians || []);
+        const normalized = list.map((c: any) => ({
+          ...c,
+          name: c.full_name || c.name || 'Unknown Clinician',
+          specialty: c.specialization || c.specialty || 'General Physician',
+          type: c.type || 'Virtual'
+        }));
+        setClinicians(normalized);
+        if (normalized.length > 0) {
+          setSelectedDoctor(normalized[0]);
+          setAppointmentType(normalized[0].type as any || 'Virtual');
+        }
+      } catch (err) {
+        console.error('Failed to load clinicians', err);
+      }
+    };
+    fetchClinicians();
   }, [user.email]);
 
   const handleCancelAppointment = (id: string) => {
@@ -303,7 +312,7 @@ export default function AppointmentsView({ user }: AppointmentsViewProps) {
                 <select
                   value={selectedDoctor?.name || ''}
                   onChange={(e) => {
-                    const found = AVAILABLE_DOCTORS.find(doc => doc.name === e.target.value);
+                    const found = clinicians.find(doc => doc.name === e.target.value);
                     if (found) {
                       setSelectedDoctor(found);
                       setAppointmentType(found.type as 'In-Person' | 'Virtual');
@@ -311,7 +320,7 @@ export default function AppointmentsView({ user }: AppointmentsViewProps) {
                   }}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-semibold bg-white"
                 >
-                  {AVAILABLE_DOCTORS.map((doc, idx) => (
+                  {clinicians.map((doc, idx) => (
                     <option key={idx} value={doc.name}>
                       {doc.name} ({doc.specialty})
                     </option>

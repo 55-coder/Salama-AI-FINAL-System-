@@ -41,9 +41,7 @@ export default function AuthScreens({ onLoginSuccess }: AuthScreensProps) {
             const loggedIn = await SalamaApiService.login(email, password);
             onLoginSuccess(loggedIn);
           } catch {
-            // If API login fails, proceed with the registered object in session
-            SalamaApiService.setActiveUser(user);
-            onLoginSuccess(user);
+            setErrorMsg('Registration was successful, but automatic login failed. Please sign in manually.');
           }
         }, 1500);
       } else {
@@ -172,7 +170,7 @@ export default function AuthScreens({ onLoginSuccess }: AuthScreensProps) {
                 {!isSignUp && (
                   <button
                     type="button"
-                    onClick={() => alert('Demo values: input any credentials, and we will simulate a high-quality session.')}
+                    onClick={() => alert('Please use your registered email and password to access your secure health records.')}
                     className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-all"
                   >
                     Forgot password?
