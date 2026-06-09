@@ -128,6 +128,7 @@ export interface Appointment {
   patient_id: string;
   patient_name: string;
   patient_email: string;
+  clinician_id: string;
   clinician_name: string;
   clinician_specialty: string;
   date: string;
@@ -651,6 +652,63 @@ export class SalamaApiService {
     return userRead;
   }
 
+  // Patient-side booking
+  static async bookAppointmentPatient(app: Omit<Appointment, 'id' | 'status' | 'patient_id'> & { clinician_id: string }): Promise<Appointment> {
+    try {
+      const appointmentDate = new Date(`${app.date}T${app.time}`).toISOString();
+      const payload: components['schemas']['AppointmentBookRequest'] = {
+        clinician_profile_id: app.clinician_id,
+        appointment_date: appointmentDate,
+        reason: app.reason,
+        is_virtual: app.type === 'Virtual'
+      };
+
+      const apiResponse = await this.request<components['schemas']['fastapi_backend__app__appointments__schemas__AppointmentRead']>(
+        '/appointments/appointments/book',
+        { method: 'POST', body: JSON.stringify(payload) }
+      );
+      const bookedAppointment = this.mapApiAppointmentToLocal(apiResponse, app.patient_name, app.patient_email);
+      SalamaDatabase.bookAppointment(bookedAppointment);
+      return bookedAppointment;
+    } catch (e) {
+      console.error('API patient book appointment failed, falling back to local database.', e);
+      // Fallback to local database. Need to reconstruct the full Appointment object for local storage.
+      const tempApp: Appointment = {
+        ...app,
+        id: `app-${Date.now()}`,
+        status: 'pending',
+        patient_id: SalamaApiService.getActiveUser()?.id || 'unknown_patient_id', // Patient ID from active user
+      };
+      return SalamaDatabase.bookAppointment(tempApp);
+    }
+  }
+
+  // Clinician-side booking
+  static async bookAppointmentClinician(app: Omit<Appointment, 'id' | 'status'> & { patient_id: string; clinician_id: string }): Promise<Appointment> {
+    try {
+      const appointmentDate = new Date(`${app.date}T${app.time}`).toISOString();
+      const payload: components['schemas']['AppointmentCreate'] = {
+        patient_id: app.patient_id,
+        appointment_date: appointmentDate,
+        reason: app.reason,
+        is_virtual: app.type === 'Virtual',
+        meeting_link: app.meeting_link
+      };
+
+      const apiResponse = await this.request<components['schemas']['fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead']>(
+        '/clinicians/clinicians/me/appointments',
+        { method: 'POST', body: JSON.stringify(payload) }
+      );
+      const bookedAppointment = this.mapApiClinicianAppointmentToLocal(apiResponse, app.patient_name, app.patient_email, app.clinician_name, app.clinician_specialty);
+      SalamaDatabase.bookAppointment(bookedAppointment);
+      return bookedAppointment;
+    } catch (e) {
+      console.error('API clinician book appointment failed, falling back to local database.', e);
+      // Fallback to local database
+      return SalamaDatabase.bookAppointment(app);
+    }
+  }
+
   static async logout() {
     try {
       await this.request('/auth/jwt/logout', { method: 'POST' });
@@ -885,17 +943,54 @@ export class SalamaApiService {
     }
   }
 
-  // 6. Appointments
+  // Helper to map API response to local Appointment interface for patient booking
+  private static mapApiAppointmentToLocal(apiResponse: components['schemas']['fastapi_backend__app__appointments__schemas__AppointmentRead'], patientName: string, patientEmail: string): Appointment {
+    return {
+      id: apiResponse.id,
+      patient_id: apiResponse.patient_id,
+      patient_name: patientName,
+      patient_email: patientEmail,
+      clinician_id: apiResponse.clinician_profile_id,
+      clinician_name: apiResponse.clinician_name || 'Unknown Clinician',
+      clinician_specialty: apiResponse.clinician_specialization || 'General Physician',
+      date: apiResponse.appointment_date.split('T')[0],
+      time: new Date(apiResponse.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      type: apiResponse.is_virtual ? 'Virtual' : 'In-Person',
+      reason: apiResponse.reason || '',
+      status: apiResponse.status,
+      meeting_link: apiResponse.meeting_link,
+      notes: apiResponse.clinician_notes || ''
+    };
+  }
+
+  // Helper to map API response to local Appointment interface for clinician booking
+  private static mapApiClinicianAppointmentToLocal(apiResponse: components['schemas']['fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead'], patientName: string, patientEmail: string, clinicianName: string, clinicianSpecialty: string): Appointment {
+    return {
+      id: apiResponse.id,
+      patient_id: apiResponse.patient_id,
+      patient_name: patientName,
+      patient_email: patientEmail,
+      clinician_id: apiResponse.clinician_profile_id,
+      clinician_name: clinicianName, // Clinician name is not in this API response, use passed value
+      clinician_specialty: clinicianSpecialty, // Clinician specialty is not in this API response, use passed value
+      date: apiResponse.appointment_date.split('T')[0],
+      time: new Date(apiResponse.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      type: apiResponse.is_virtual ? 'Virtual' : 'In-Person',
+      reason: apiResponse.reason || '',
+      status: apiResponse.status,
+      meeting_link: apiResponse.meeting_link,
+      notes: apiResponse.clinician_notes || ''
+    };
+  }
+
+  // 6. Appointments (General getter, still uses local for now)
   static async getAppointments(role: 'patient' | 'clinician', email: string): Promise<Appointment[]> {
     return SalamaDatabase.getAppointments(role, email);
   }
 
-  static async bookAppointment(app: Omit<Appointment, 'id' | 'status'>): Promise<Appointment> {
-    return SalamaDatabase.bookAppointment(app);
-  }
-
   static async updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment | null> {
-    return SalamaDatabase.updateAppointment(id, updates);
+    // TODO: Implement API call for updateAppointment if needed, currently only local
+    return SalamaDatabase.updateAppointment(id, updates); 
   }
 
   static async getClinicians(): Promise<any[]> {

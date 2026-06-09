@@ -15,12 +15,6 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const AVAILABLE_CLINICIANS = [
-  { name: 'Dr. Sarah Kimani', specialty: 'Cardiologist' },
-  { name: 'Dr. James Otieno', specialty: 'General Physician' },
-  { name: 'Dr. Mercy Wanjiku', specialty: 'Endocrinologist' }
-];
-
 export default function ClinicianAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,13 +23,15 @@ export default function ClinicianAppointments() {
 
   // New scheduling booking state
   const [patName, setPatName] = useState('');
-  const [patEmail, setPatEmail] = useState('');
+  const [patEmail, setPatEmail] = useState(''); // Patient email for booking
   const [docName, setDocName] = useState('Dr. Sarah Kimani');
   const [date, setDate] = useState('2026-06-15');
   const [time, setTime] = useState('10:00 AM');
   const [type, setType] = useState<'In-Person' | 'Virtual'>('In-Person');
   const [reason, setReason] = useState('');
 
+  const [cliniciansList, setCliniciansList] = useState<any[]>([]); // To store fetched clinicians
+  const [selectedClinicianForBooking, setSelectedClinicianForBooking] = useState<any | null>(null); // For the booking modal
   const loadData = () => {
     // Clinicians read all records
     const list = SalamaDatabase.getAppointments('clinician', '');
@@ -52,27 +48,33 @@ export default function ClinicianAppointments() {
     confetti({ particleCount: 30 });
   };
 
-  const handleBook = (e: React.FormEvent) => {
+  const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    const foundDoc = AVAILABLE_CLINICIANS.find(doc => doc.name === docName);
-    const specialty = foundDoc ? foundDoc.specialty : 'General Physician';
+    if (!selectedClinicianForBooking) {
+      alert('Please select a clinician.');
+      return;
+    }
 
-    SalamaDatabase.bookAppointment({
-      patient_id: `pat-${Date.now()}`,
-      patient_name: patName,
-      patient_email: patEmail,
-      clinician_name: docName,
-      clinician_specialty: specialty,
-      date,
-      time,
-      type,
-      reason,
-      notes: 'Scheduled by clinician from dashboard suite.'
-    });
-
-    setShowScheduleModal(false);
-    loadData();
-    confetti({ particleCount: 100, spread: 60 });
+    try {
+      await SalamaApiService.bookAppointmentClinician({
+        patient_id: `pat-${Date.now()}`, // Placeholder, ideally patient_id should be selected from existing patients
+        patient_name: patName,
+        patient_email: patEmail,
+        clinician_id: selectedClinicianForBooking.id,
+        clinician_name: selectedClinicianForBooking.name,
+        clinician_specialty: selectedClinicianForBooking.specialty,
+        date,
+        time,
+        type,
+        reason,
+        notes: 'Scheduled by clinician from dashboard suite.'
+      });
+      setShowScheduleModal(false);
+      loadData();
+      confetti({ particleCount: 100, spread: 60 });
+    } catch (error: any) {
+      alert(`Failed to schedule appointment: ${error.message}`);
+    }
   };
 
   // Stats computed from appointments lists exactly matching Page 10 values!
@@ -314,10 +316,14 @@ export default function ClinicianAppointments() {
                 <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Clinician / Doctor</label>
                 <select
                   value={docName}
-                  onChange={(e) => setDocName(e.target.value)}
+                  onChange={(e) => {
+                    const found = cliniciansList.find(doc => doc.name === e.target.value);
+                    if (found) setSelectedClinicianForBooking(found);
+                    setDocName(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold bg-white"
                 >
-                  {AVAILABLE_CLINICIANS.map((doc, idx) => (
+                  {cliniciansList.map((doc, idx) => (
                     <option key={idx} value={doc.name}>
                       {doc.name} ({doc.specialty})
                     </option>
