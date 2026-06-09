@@ -753,7 +753,7 @@ export class SalamaApiService {
         systolic_value: it.systolic_value,
         diastolic_value: it.diastolic_value,
         body_posture: it.body_posture?.toLowerCase() || 'sitting',
-        measurement_location: it.measurement_location || 'Home'
+        measurement_location: it.measurement_location || 'Left wrist'
       }));
     } catch {
       return SalamaDatabase.getBpRecords(email);
@@ -767,7 +767,10 @@ export class SalamaApiService {
         systolic_value: rec.systolic_value,
         diastolic_value: rec.diastolic_value,
         body_posture: rec.body_posture || 'sitting',
-        measurement_location: rec.measurement_location || 'Home'
+        // Map location to valid backend enum or null
+        measurement_location: ['left wrist', 'right wrist', 'left arm', 'right arm'].includes(rec.measurement_location?.toLowerCase() || '') 
+          ? rec.measurement_location?.toLowerCase() 
+          : 'left wrist'
       };
       const result = await this.request<any>('/health_data/blood-pressure/', {
         method: 'POST',
@@ -795,23 +798,36 @@ export class SalamaApiService {
     }
   }
 
-  static async addHrRecord(email: string, rec: Omit<HeartRateRecord, 'id'>): Promise<HeartRateRecord> {
-    try {
-      const payload = {
-        start_date_time: rec.start_date_time,
-        heart_rate_value: rec.heart_rate_value,
-        body_posture: rec.body_posture || 'sitting',
-        measurement_location: rec.measurement_location || 'Home'
-      };
-      await this.request<any>('/health_data/heart-rate/', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-      return SalamaDatabase.addHrRecord(email, rec);
-    } catch {
-      return SalamaDatabase.addHrRecord(email, rec);
-    }
+  static async addHrRecord(email: string, rec: any): Promise<HeartRateRecord> {
+  try {
+    const payload = {
+      // API expects 'value' field instead of 'heart_rate_value'
+      value: Number(rec.heart_rate_value || rec.value), 
+      // Use the timezone-aware string as requested
+      start_date_time: rec.start_date_time || new Date().toISOString(),
+      body_posture: rec.body_posture || 'sitting',
+      // Map location to valid backend enum or null
+      measurement_location: ['left wrist', 'right wrist', 'left arm', 'right arm'].includes(rec.measurement_location?.toLowerCase() || '') 
+        ? rec.measurement_location?.toLowerCase() 
+        : 'left wrist'
+    };
+
+    console.log("SENDING TO FASTAPI:", payload); // Double check it in your console tab!
+
+    await this.request<any>('/health_data/heart-rate/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    return SalamaDatabase.addHrRecord(email, rec);
+  } catch (error) {
+    console.error("API Error details:", error);
+    return SalamaDatabase.addHrRecord(email, rec);
   }
+}
 
   // 4b. Health Assessment API methods
   static async getHealthAssessments(email: string): Promise<HealthAssessmentRecord[]> {

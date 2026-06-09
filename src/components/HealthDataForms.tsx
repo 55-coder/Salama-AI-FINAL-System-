@@ -247,7 +247,7 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
     e.preventDefault();
     setSubmitting(true);
     try {
-      await SalamaApiService.addBpRecord(user.email, {
+      await SalamaApiService.addBpRecord(user.email, { // The time is already timezone-aware due to toISOString()
         start_date_time: new Date(bpDateTime).toISOString(),
         systolic_value: bpSystolic,
         diastolic_value: bpDiastolic,
@@ -271,7 +271,7 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
     e.preventDefault();
     setSubmitting(true);
     try {
-      await SalamaApiService.addHrRecord(user.email, {
+      await SalamaApiService.addHrRecord(user.email, { // The time is already timezone-aware due to toISOString()
         start_date_time: new Date(hrDateTime).toISOString(),
         heart_rate_value: hrValue,
         body_posture: hrPosture,
