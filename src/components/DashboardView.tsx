@@ -134,7 +134,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
     });
 
   return (
-    <div className="space-y-6 font-sans p-6 pb-20 overflow-y-auto h-screen max-w-7xl mx-auto">
+    <div className="space-y-4 md:space-y-6 font-sans p-4 md:p-6 pb-20 overflow-y-auto h-screen max-w-7xl mx-auto">
       
       {/* 1. Header & Welcome Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -149,7 +149,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
               <Sparkles className="h-3 w-3 animate-spin" />
               Secure Patient Portal Connected
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight mb-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
               Welcome back, {fullName}
             </h1>
             <p className="text-slate-300 text-sm max-w-md font-medium leading-relaxed">
@@ -262,7 +262,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
         </h2>
         
         {latestAssessment ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* Risk Card 1: CVD */}
             <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between relative group hover:border-slate-200 transition-all">
@@ -395,7 +395,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
         
         {/* Chart (Col span 2) */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-50 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-50 pb-3 gap-3">
             <div>
               <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
                 LIVE CLINICAL TELEMETRY
@@ -416,7 +416,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
             )}
           </div>
           
-          <div className="h-64">
+          <div className="h-48 sm:h-64 w-full">
             {lineChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -509,7 +509,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
 
       {/* 5. Historical Log Entries list */}
       <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-4 border-b border-slate-50 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-50 pb-3 gap-3">
           <div>
             <h3 className="text-lg font-bold text-gray-900">Historical Log Entries</h3>
             <p className="text-slate-400 text-xs font-semibold">Track historical blood pressure measurements and postures.</p>
@@ -523,8 +523,8 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+        <div className="overflow-x-auto -mx-5 px-5">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-100 text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50/50">
                 <th className="py-3 px-4">DATE & TIME</th>
