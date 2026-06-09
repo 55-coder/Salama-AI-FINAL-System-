@@ -250,7 +250,7 @@ export default function App() {
                       <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">{activeRiskDetails.name} Risk Rate</span>
                       <div className="flex items-baseline gap-1 mt-1">
                         <span className="text-3xl font-black text-rose-600">{Math.round(activeRiskDetails.score)}%</span>
-                        <span className="text-xs font-semibold text-slate-500">probability</span>
+                    <span className="text-xs font-semibold text-slate-500">Probability</span>
                       </div>
                     </div>
 

@@ -43,13 +43,11 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
     try {
       const prof = await SalamaApiService.getProfile(user.email);
       setProfile(prof);
-      
-      const sessList = await SalamaDatabase.getRiskAssessments(user.email);
-      if (sessList && sessList.length > 0) {
-        setLatestAssessment(sessList[0]);
-      } else {
-        setLatestAssessment(null);
-      }
+
+      // To ensure consistency with the "clinician dashboard view" and always show the latest,
+      // trigger a fresh risk assessment on load.
+      const latestRiskAssessment = await SalamaApiService.runRiskAssessment(user.email);
+      setLatestAssessment(latestRiskAssessment);
 
       const bps = await SalamaApiService.getBpRecords(user.email);
       setBpRecords(bps);
@@ -273,7 +271,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
                   </span>
                   <Heart className="h-4 w-4 text-slate-300 group-hover:text-rose-400 transition-colors" />
                 </div>
-                <div className="flex items-baseline gap-2 mb-2">
+                <div className="flex items-baseline gap-2 mb-2" data-testid="cvd-risk-score">
                   <span className={`text-3xl font-extrabold ${getRiskTextColor(latestAssessment.cvd_risk)}`}>
                     {latestAssessment.cvd_risk.toFixed(1)}%
                   </span>
@@ -300,7 +298,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
                   </span>
                   <TrendingUp className="h-4 w-4 text-slate-300 group-hover:text-amber-500 transition-colors" />
                 </div>
-                <div className="flex items-baseline gap-2 mb-2">
+                <div className="flex items-baseline gap-2 mb-2" data-testid="hypertension-risk-score">
                   <span className={`text-3xl font-extrabold ${getRiskTextColor(latestAssessment.hypertension_risk)}`}>
                     {latestAssessment.hypertension_risk.toFixed(1)}%
                   </span>
@@ -327,7 +325,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
                   </span>
                   <Activity className="h-4 w-4 text-slate-300 group-hover:text-cyan-500 transition-colors" />
                 </div>
-                <div className="flex items-baseline gap-2 mb-2">
+                <div className="flex items-baseline gap-2 mb-2" data-testid="stroke-risk-score">
                   <span className={`text-3xl font-extrabold ${getRiskTextColor(latestAssessment.stroke_risk)}`}>
                     {latestAssessment.stroke_risk.toFixed(1)}%
                   </span>
@@ -354,7 +352,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
                   </span>
                   <HeartPulse className="h-4 w-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
                 </div>
-                <div className="flex items-baseline gap-2 mb-2">
+                <div className="flex items-baseline gap-2 mb-2" data-testid="chd-risk-score">
                   <span className={`text-3xl font-extrabold ${getRiskTextColor(latestAssessment.chd_risk)}`}>
                     {latestAssessment.chd_risk.toFixed(1)}%
                   </span>
@@ -473,7 +471,7 @@ export default function DashboardView({ user, onNavigateToForms, openAssessmentM
                   <span className="text-[10px] font-bold text-slate-400 font-mono">
                     Scan on {new Date(latestAssessment.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
-                  <span className={`px-2 py-0.5 text-[10px] font-black rounded-lg ${getRiskColor(latestAssessment.cvd_risk >= 60 ? 'High' : 'Low')}`}>
+                  <span className={`px-2 py-0.5 text-[10px] font-black rounded-lg ${getRiskColor(latestAssessment.cvd_risk >= 60 ? 'High' : 'Low')}`} data-testid="cvd-risk-score-history">
                     {latestAssessment.cvd_risk.toFixed(0)}% • {latestAssessment.cvd_risk >= 60 ? 'High' : 'Low'}
                   </span>
                 </div>

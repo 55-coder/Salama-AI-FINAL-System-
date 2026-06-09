@@ -15,6 +15,12 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
+const AVAILABLE_DOCTORS = [
+  { name: 'Dr. Sarah Kimani', specialty: 'Cardiologist', type: 'Virtual' },
+  { name: 'Dr. James Otieno', specialty: 'General Physician', type: 'In-Person' },
+  { name: 'Dr. Mercy Wanjiku', specialty: 'Endocrinologist', type: 'Virtual' }
+];
+
 interface AppointmentsViewProps {
   user: User;
 }
@@ -39,13 +45,11 @@ export default function AppointmentsView({ user }: AppointmentsViewProps) {
 
   useEffect(() => {
     loadAppointments();
-    SalamaApiService.getClinicians().then((list) => {
-      setClinicians(list);
-      if (list.length > 0) {
-        setSelectedDoctor(list[0]);
-        setAppointmentType(list[0].type || 'Virtual');
-      }
-    });
+    setClinicians(AVAILABLE_DOCTORS);
+    if (AVAILABLE_DOCTORS.length > 0) {
+      setSelectedDoctor(AVAILABLE_DOCTORS[0]);
+      setAppointmentType(AVAILABLE_DOCTORS[0].type as any || 'Virtual');
+    }
   }, [user.email]);
 
   const handleCancelAppointment = (id: string) => {
@@ -297,7 +301,7 @@ export default function AppointmentsView({ user }: AppointmentsViewProps) {
                   Select Medical Specialist
                 </label>
                 <select
-                  value={selectedDoctor.name}
+                  value={selectedDoctor?.name || ''}
                   onChange={(e) => {
                     const found = AVAILABLE_DOCTORS.find(doc => doc.name === e.target.value);
                     if (found) {
