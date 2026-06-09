@@ -1,0 +1,6497 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/auth/jwt/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Auth:Jwt.Login",
+        "operationId": "auth-auth:jwt.login",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BearerResponse"
+                },
+                "example": {
+                  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI",
+                  "token_type": "bearer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "LOGIN_BAD_CREDENTIALS": {
+                    "summary": "Bad credentials or the user is inactive.",
+                    "value": {
+                      "detail": "LOGIN_BAD_CREDENTIALS"
+                    }
+                  },
+                  "LOGIN_USER_NOT_VERIFIED": {
+                    "summary": "The user is not verified.",
+                    "value": {
+                      "detail": "LOGIN_USER_NOT_VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/jwt/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Auth:Jwt.Logout",
+        "operationId": "auth-auth:jwt.logout",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register:Register",
+        "operationId": "auth-register:register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "REGISTER_USER_ALREADY_EXISTS": {
+                    "summary": "A user with this email already exists.",
+                    "value": {
+                      "detail": "REGISTER_USER_ALREADY_EXISTS"
+                    }
+                  },
+                  "REGISTER_INVALID_PASSWORD": {
+                    "summary": "Password validation failed.",
+                    "value": {
+                      "detail": {
+                        "code": "REGISTER_INVALID_PASSWORD",
+                        "reason": "Password should beat least 3 characters"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset:Forgot Password",
+        "operationId": "auth-reset:forgot_password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_auth-reset_forgot_password"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset:Reset Password",
+        "operationId": "auth-reset:reset_password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_auth-reset_reset_password"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "RESET_PASSWORD_BAD_TOKEN": {
+                    "summary": "Bad or expired token.",
+                    "value": {
+                      "detail": "RESET_PASSWORD_BAD_TOKEN"
+                    }
+                  },
+                  "RESET_PASSWORD_INVALID_PASSWORD": {
+                    "summary": "Password validation failed.",
+                    "value": {
+                      "detail": {
+                        "code": "RESET_PASSWORD_INVALID_PASSWORD",
+                        "reason": "Password should be at least 3 characters"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/request-verify-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify:Request-Token",
+        "operationId": "auth-verify:request-token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_auth-verify_request-token"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify:Verify",
+        "operationId": "auth-verify:verify",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_auth-verify_verify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "VERIFY_USER_BAD_TOKEN": {
+                    "summary": "Bad token, not existing user or not the e-mail currently set for the user.",
+                    "value": {
+                      "detail": "VERIFY_USER_BAD_TOKEN"
+                    }
+                  },
+                  "VERIFY_USER_ALREADY_VERIFIED": {
+                    "summary": "The user is already verified.",
+                    "value": {
+                      "detail": "VERIFY_USER_ALREADY_VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users:Current User",
+        "operationId": "users-users:current_user",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users:Patch Current User",
+        "operationId": "users-users:patch_current_user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "UPDATE_USER_EMAIL_ALREADY_EXISTS": {
+                    "summary": "A user with this email already exists.",
+                    "value": {
+                      "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
+                    }
+                  },
+                  "UPDATE_USER_INVALID_PASSWORD": {
+                    "summary": "Password validation failed.",
+                    "value": {
+                      "detail": {
+                        "code": "UPDATE_USER_INVALID_PASSWORD",
+                        "reason": "Password should beat least 3 characters"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users:User",
+        "operationId": "users-users:user",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users:Patch User",
+        "operationId": "users-users:patch_user",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UPDATE_USER_EMAIL_ALREADY_EXISTS": {
+                    "summary": "A user with this email already exists.",
+                    "value": {
+                      "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
+                    }
+                  },
+                  "UPDATE_USER_INVALID_PASSWORD": {
+                    "summary": "Password validation failed.",
+                    "value": {
+                      "detail": {
+                        "code": "UPDATE_USER_INVALID_PASSWORD",
+                        "reason": "Password should beat least 3 characters"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users:Delete User",
+        "operationId": "users-users:delete_user",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/blood-pressure/": {
+      "post": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Create Bp",
+        "description": "Create a new blood pressure record.",
+        "operationId": "health_data-create_bp",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BloodPressureCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__health_data__schemas__BloodPressureRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get All Bp",
+        "description": "Fetch all blood pressure records for the current user (with optional date filtering).",
+        "operationId": "health_data-get_all_bp",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/fastapi_backend__app__health_data__schemas__BloodPressureRead"
+                  },
+                  "title": "Response Health Data-Get All Bp"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/blood-pressure/{bp_id}": {
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get Bp",
+        "description": "Fetch a single blood pressure record by ID.",
+        "operationId": "health_data-get_bp",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Bp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__health_data__schemas__BloodPressureRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Delete Bp",
+        "description": "Delete a blood pressure record.",
+        "operationId": "health_data-delete_bp",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Bp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/heart-rate/": {
+      "post": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Create Hr",
+        "description": "Create a new heart rate record.",
+        "operationId": "health_data-create_hr",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeartRateCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeartRateRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get All Hr",
+        "description": "Fetch all heart rate records for the current user (with optional date filtering).",
+        "operationId": "health_data-get_all_hr",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HeartRateRead"
+                  },
+                  "title": "Response Health Data-Get All Hr"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/heart-rate/{hr_id}": {
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get Hr",
+        "description": "Fetch a single heart rate record by ID.",
+        "operationId": "health_data-get_hr",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "hr_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Hr Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeartRateRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Delete Hr",
+        "description": "Delete a heart rate record.",
+        "operationId": "health_data-delete_hr",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "hr_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Hr Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/health-assessment/": {
+      "post": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Create Health Assessment",
+        "description": "Create a new health assessment record.",
+        "operationId": "health_data-create_health_assessment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HealthAssessmentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthAssessmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get All Health Assessments",
+        "description": "Fetch all health assessment records for the current user.",
+        "operationId": "health_data-get_all_health_assessments",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HealthAssessmentRead"
+                  },
+                  "title": "Response Health Data-Get All Health Assessments"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health_data/health-assessment/{assessment_id}": {
+      "get": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Get Health Assessment",
+        "description": "Fetch a single health assessment record by ID.",
+        "operationId": "health_data-get_health_assessment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthAssessmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "health_data"
+        ],
+        "summary": "Delete Health Assessment",
+        "description": "Delete a health assessment record.",
+        "operationId": "health_data-delete_health_assessment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prescription/prescriptions/": {
+      "post": {
+        "tags": [
+          "Prescriptions"
+        ],
+        "summary": "Create Prescription",
+        "operationId": "Prescriptions-create_prescription",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/fastapi_backend__app__prescription__schemas__PrescriptionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__prescription__schemas__PrescriptionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Prescriptions"
+        ],
+        "summary": "Get User Prescriptions",
+        "operationId": "Prescriptions-get_user_prescriptions",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/fastapi_backend__app__prescription__schemas__PrescriptionRead"
+                  },
+                  "title": "Response Prescriptions-Get User Prescriptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prescription/prescriptions/{prescription_id}": {
+      "get": {
+        "tags": [
+          "Prescriptions"
+        ],
+        "summary": "Get Prescription",
+        "operationId": "Prescriptions-get_prescription",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prescription_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Prescription Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__prescription__schemas__PrescriptionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/profiles/": {
+      "get": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Get Profile",
+        "operationId": "profiles-get_profile",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__user_profile__schemas__UserProfileRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Update Profile",
+        "operationId": "profiles-update_profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__user_profile__schemas__UserProfileRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Create Profile",
+        "operationId": "profiles-create_profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__user_profile__schemas__UserProfileRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Delete Profile",
+        "operationId": "profiles-delete_profile",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean",
+                  "title": "Response Profiles-Delete Profile"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/predictions/predictions/run": {
+      "post": {
+        "tags": [
+          "Predictions"
+        ],
+        "summary": "Run risk predictions for the current user",
+        "operationId": "Predictions-run_risk_predictions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/predictions/predictions/history": {
+      "get": {
+        "tags": [
+          "Predictions"
+        ],
+        "summary": "Retrieve past risk assessment results for the current user",
+        "operationId": "Predictions-prediction_history",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RiskAssessmentResultRead"
+                  },
+                  "type": "array",
+                  "title": "Response Predictions-Prediction History"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/predictions/predictions/explain/{risk_assessment_id}": {
+      "get": {
+        "tags": [
+          "Predictions"
+        ],
+        "summary": "Retrieve SHAP values, top risk factors, and clinical explanations for a specific prediction",
+        "description": "Fetches the TreeSHAP feature contributions, custom clinic recommendations, \nand profiling metadata linked directly to a historical inference instance.",
+        "operationId": "Predictions-get_prediction_explainability",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "risk_assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Risk Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentExplainabilityRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predictions/predictions/diagnose": {
+      "get": {
+        "tags": [
+          "Predictions"
+        ],
+        "summary": "Debug endpoint — checks models, profile, assessment, and feature engineering",
+        "description": "Returns a full diagnostic report without running the models:\n- Whether each model file exists on disk\n- Whether the user has a profile and health assessment\n- The exact feature values that would be sent to each model\n- Any errors from the feature engineering step\n\nUse this endpoint first when /run returns empty results.",
+        "operationId": "Predictions-diagnose_predictions",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Predictions-Diagnose Predictions"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/clinicians/clinicians/profile": {
+      "post": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Create clinician profile",
+        "operationId": "Clinician Dashboard-create_profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClinicianProfileCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianProfileRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/clinicians/clinicians/me": {
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Get my clinician profile",
+        "operationId": "Clinician Dashboard-get_my_profile",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianProfileRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Update my clinician profile",
+        "operationId": "Clinician Dashboard-update_profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClinicianProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianProfileRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/clinicians/clinicians/me/patients": {
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "List linked patients — optionally filter by risk level",
+        "description": "Returns all patients linked to this clinician, sorted by overall risk score descending. Use `?risk=high` to filter to high-risk patients only. Valid values: `high`, `moderate`, `low`.",
+        "operationId": "Clinician Dashboard-list_patients",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "risk",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by risk level: high | moderate | low",
+              "title": "Risk"
+            },
+            "description": "Filter by risk level: high | moderate | low"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighRiskPatientResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clinicians/clinicians/me/patients/search": {
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Search linked patients by name or email",
+        "operationId": "Clinician Dashboard-search_patients",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Search term — name or email",
+              "title": "Q"
+            },
+            "description": "Search term — name or email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clinicians/clinicians/me/patients/{patient_id}": {
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Get full profile, latest assessment, and risk data for a patient",
+        "operationId": "Clinician Dashboard-get_patient",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clinicians/clinicians/me/appointments": {
+      "post": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Schedule an appointment (virtual or in-person)",
+        "description": "Set `is_virtual=true` and provide a `meeting_link` for virtual appointments. Leave `is_virtual=false` for in-person. `status` defaults to `pending`.",
+        "operationId": "Clinician Dashboard-create_appointment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "List appointments",
+        "description": "Returns appointments for this clinician. Filter by `status` (pending | accepted | completed | cancelled |missed ) or set `upcoming=true` to show only future appointments.",
+        "operationId": "Clinician Dashboard-list_appointments",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "pending | accepted | completed | cancelled |missed",
+              "title": "Status"
+            },
+            "description": "pending | accepted | completed | cancelled |missed"
+          },
+          {
+            "name": "upcoming",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Show only future appointments",
+              "default": false,
+              "title": "Upcoming"
+            },
+            "description": "Show only future appointments"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__AppointmentListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clinicians/clinicians/me/appointments/{appointment_id}": {
+      "patch": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Update appointment — reschedule, add notes, or change status",
+        "operationId": "Clinician Dashboard-update_appointment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clinicians/clinicians/me/prescriptions": {
+      "post": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "Assign a prescription to a patient",
+        "operationId": "Clinician Dashboard-assign_prescription",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__PrescriptionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__PrescriptionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Clinician Dashboard"
+        ],
+        "summary": "List prescriptions — all or filtered by patient",
+        "operationId": "Clinician Dashboard-list_prescriptions",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to a specific patient UUID",
+              "title": "Patient Id"
+            },
+            "description": "Filter to a specific patient UUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrescriptionListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/appointments/clinicians": {
+      "get": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "Browse clinicians available for booking",
+        "description": "Returns verified, active clinicians. Filter by `specialization` or free-text `search` (name / hospital). Set `verified_only=false` to include unverified clinicians.",
+        "operationId": "Patient Appointments-browse_clinicians",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by name or hospital",
+              "title": "Search"
+            },
+            "description": "Search by name or hospital"
+          },
+          {
+            "name": "specialization",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "e.g. Cardiology",
+              "title": "Specialization"
+            },
+            "description": "e.g. Cardiology"
+          },
+          {
+            "name": "verified_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Verified Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/appointments/book": {
+      "post": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "Book an appointment with a clinician",
+        "description": "Creates a new appointment with `status=pending`. The clinician will confirm or reject it. Also automatically links the patient to the clinician's practice if not already linked.",
+        "operationId": "Patient Appointments-book_appointment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentBookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/appointments/appointments/me": {
+      "get": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "List my appointments",
+        "description": "Returns the authenticated patient's appointments, newest first. Filter by `status` (pending | accepted | completed | cancelled |missed) or set `upcoming=true` for future appointments only.",
+        "operationId": "Patient Appointments-my_appointments",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "pending | accepted | completed | cancelled |missed",
+              "title": "Status"
+            },
+            "description": "pending | accepted | completed | cancelled |missed"
+          },
+          {
+            "name": "upcoming",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Show only future appointments",
+              "default": false,
+              "title": "Upcoming"
+            },
+            "description": "Show only future appointments"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/appointments/me/{appointment_id}": {
+      "get": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "Get a single appointment detail",
+        "operationId": "Patient Appointments-appointment_detail",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "Cancel an appointment",
+        "description": "Only PENDING or CONFIRMED appointments can be cancelled.",
+        "operationId": "Patient Appointments-cancel_appointment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/appointments/me/{appointment_id}/reschedule": {
+      "patch": {
+        "tags": [
+          "Patient Appointments"
+        ],
+        "summary": "Reschedule a pending appointment",
+        "description": "Only PENDING appointments can be rescheduled by the patient.",
+        "operationId": "Patient Appointments-reschedule_appointment",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Appointment Id"
+            }
+          },
+          {
+            "name": "new_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "New appointment datetime (timezone-aware)",
+              "title": "New Date"
+            },
+            "description": "New appointment datetime (timezone-aware)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlcoholUse": {
+        "type": "string",
+        "enum": [
+          "none",
+          "moderate",
+          "heavy"
+        ],
+        "title": "AlcoholUse"
+      },
+      "AppointmentBookRequest": {
+        "properties": {
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id",
+            "description": "ID of the clinician to book with"
+          },
+          "appointment_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Appointment Date",
+            "description": "Requested date and time (timezone-aware)"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Reason for the visit"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual",
+            "description": "True for a video/online appointment",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "clinician_profile_id",
+          "appointment_date"
+        ],
+        "title": "AppointmentBookRequest"
+      },
+      "AppointmentCreate": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "appointment_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Appointment Date"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual",
+            "default": false
+          },
+          "meeting_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "patient_id",
+          "appointment_date"
+        ],
+        "title": "AppointmentCreate"
+      },
+      "AppointmentStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "accepted",
+          "completed",
+          "cancelled",
+          "missed"
+        ],
+        "title": "AppointmentStatus"
+      },
+      "AppointmentUpdate": {
+        "properties": {
+          "appointment_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appointment Date"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "clinician_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinician Notes"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "is_virtual": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Virtual"
+          },
+          "meeting_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Link"
+          }
+        },
+        "type": "object",
+        "title": "AppointmentUpdate"
+      },
+      "BearerResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type"
+        ],
+        "title": "BearerResponse"
+      },
+      "BloodPressureCreate": {
+        "properties": {
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Date Time"
+          },
+          "end_date_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date Time"
+          },
+          "descriptive_statistic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DescriptiveStatistic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_physical_activity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationship"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_sleep": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationshipToSleep"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "body_posture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BodyPosture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "systolic_value": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 50,
+            "title": "Systolic Value"
+          },
+          "diastolic_value": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 30,
+            "title": "Diastolic Value"
+          },
+          "systolic_unit": {
+            "$ref": "#/components/schemas/BloodPressureUnit",
+            "default": "mmHg"
+          },
+          "diastolic_unit": {
+            "$ref": "#/components/schemas/BloodPressureUnit",
+            "default": "mmHg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_date_time",
+          "systolic_value",
+          "diastolic_value"
+        ],
+        "title": "BloodPressureCreate"
+      },
+      "BloodPressureUnit": {
+        "type": "string",
+        "enum": [
+          "mmHg"
+        ],
+        "title": "BloodPressureUnit"
+      },
+      "BloodPressureValueRead": {
+        "properties": {
+          "systolic_value": {
+            "type": "number",
+            "title": "Systolic Value"
+          },
+          "diastolic_value": {
+            "type": "number",
+            "title": "Diastolic Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "systolic_value",
+          "diastolic_value"
+        ],
+        "title": "BloodPressureValueRead"
+      },
+      "BodyPosture": {
+        "type": "string",
+        "enum": [
+          "sitting",
+          "standing",
+          "lying",
+          "reclining"
+        ],
+        "title": "BodyPosture"
+      },
+      "Body_auth-reset_forgot_password": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "Body_auth-reset:forgot_password"
+      },
+      "Body_auth-reset_reset_password": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "password"
+        ],
+        "title": "Body_auth-reset:reset_password"
+      },
+      "Body_auth-verify_request-token": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "Body_auth-verify:request-token"
+      },
+      "Body_auth-verify_verify": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "Body_auth-verify:verify"
+      },
+      "BpHistory": {
+        "type": "string",
+        "enum": [
+          "normal",
+          "prehypertension",
+          "hypertension"
+        ],
+        "title": "BpHistory"
+      },
+      "BpMedication": {
+        "type": "string",
+        "enum": [
+          "none",
+          "beta_blocker",
+          "diuretic",
+          "ace_inhibitor",
+          "other"
+        ],
+        "title": "BpMedication"
+      },
+      "ClinicianListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ClinicianPublicRead"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "results"
+        ],
+        "title": "ClinicianListResponse"
+      },
+      "ClinicianProfileCreate": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "specialization": {
+            "type": "string",
+            "title": "Specialization"
+          },
+          "license_number": {
+            "type": "string",
+            "title": "License Number"
+          },
+          "hospital_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Name"
+          },
+          "years_of_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Experience"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "specialization",
+          "license_number"
+        ],
+        "title": "ClinicianProfileCreate"
+      },
+      "ClinicianProfileRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "specialization": {
+            "type": "string",
+            "title": "Specialization"
+          },
+          "license_number": {
+            "type": "string",
+            "title": "License Number"
+          },
+          "hospital_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Name"
+          },
+          "years_of_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Experience"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "is_verified": {
+            "type": "boolean",
+            "title": "Is Verified"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "slug",
+          "first_name",
+          "last_name",
+          "full_name",
+          "specialization",
+          "license_number",
+          "is_verified",
+          "is_active",
+          "created_at"
+        ],
+        "title": "ClinicianProfileRead"
+      },
+      "ClinicianProfileUpdate": {
+        "properties": {
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "specialization": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialization"
+          },
+          "hospital_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Name"
+          },
+          "years_of_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Experience"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          }
+        },
+        "type": "object",
+        "title": "ClinicianProfileUpdate"
+      },
+      "ClinicianPublicRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "specialization": {
+            "type": "string",
+            "title": "Specialization"
+          },
+          "hospital_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Name"
+          },
+          "years_of_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Experience"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "is_verified": {
+            "type": "boolean",
+            "title": "Is Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "full_name",
+          "specialization",
+          "is_verified"
+        ],
+        "title": "ClinicianPublicRead",
+        "description": "Minimal clinician info shown to a patient when browsing / searching."
+      },
+      "DescriptiveStatistic": {
+        "type": "string",
+        "enum": [
+          "average",
+          "maximum",
+          "minimum"
+        ],
+        "title": "DescriptiveStatistic"
+      },
+      "DiseasePredictionResult": {
+        "properties": {
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score",
+            "description": "Probability / risk score [0-1]"
+          },
+          "risk_label": {
+            "type": "string",
+            "title": "Risk Label",
+            "description": "'Low' | 'Moderate' | 'High'"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "features_used": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Features Used"
+          }
+        },
+        "type": "object",
+        "required": [
+          "disease",
+          "risk_score",
+          "risk_label",
+          "model_version",
+          "features_used"
+        ],
+        "title": "DiseasePredictionResult"
+      },
+      "EducationLevel": {
+        "type": "string",
+        "enum": [
+          "primary",
+          "high_school",
+          "undergraduate",
+          "graduate"
+        ],
+        "title": "EducationLevel"
+      },
+      "ErrorModel": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorModel"
+      },
+      "Gender": {
+        "type": "string",
+        "enum": [
+          "male",
+          "female",
+          "other"
+        ],
+        "title": "Gender"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthAssessmentCreate": {
+        "properties": {
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "glucose": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glucose"
+          },
+          "avg_glucose_level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Glucose Level"
+          },
+          "total_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cholesterol"
+          },
+          "hdl_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hdl Cholesterol"
+          },
+          "on_bp_medication": {
+            "type": "boolean",
+            "title": "On Bp Medication",
+            "default": false
+          },
+          "bp_medication_type": {
+            "$ref": "#/components/schemas/BpMedication"
+          },
+          "smoking_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SmokingStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cigs_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cigs Per Day"
+          },
+          "alcohol_use": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlcoholUse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physical_activity_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhysicalActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bp_medication_type"
+        ],
+        "title": "HealthAssessmentCreate"
+      },
+      "HealthAssessmentRead": {
+        "properties": {
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "glucose": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glucose"
+          },
+          "avg_glucose_level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Glucose Level"
+          },
+          "total_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cholesterol"
+          },
+          "hdl_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hdl Cholesterol"
+          },
+          "on_bp_medication": {
+            "type": "boolean",
+            "title": "On Bp Medication",
+            "default": false
+          },
+          "bp_medication_type": {
+            "$ref": "#/components/schemas/BpMedication"
+          },
+          "smoking_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SmokingStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cigs_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cigs Per Day"
+          },
+          "alcohol_use": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlcoholUse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physical_activity_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhysicalActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment Notes"
+          },
+          "blood_pressures": {
+            "items": {
+              "$ref": "#/components/schemas/BloodPressureValueRead"
+            },
+            "type": "array",
+            "title": "Blood Pressures",
+            "default": []
+          },
+          "heart_rates": {
+            "items": {
+              "$ref": "#/components/schemas/HeartRateValueRead"
+            },
+            "type": "array",
+            "title": "Heart Rates",
+            "default": []
+          },
+          "bmi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bmi"
+          },
+          "log_bmi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Log Bmi"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bp_medication_type",
+          "id",
+          "user_id"
+        ],
+        "title": "HealthAssessmentRead"
+      },
+      "HealthAssessmentSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "bmi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bmi"
+          },
+          "glucose": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glucose"
+          },
+          "avg_glucose_level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Glucose Level"
+          },
+          "total_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cholesterol"
+          },
+          "hdl_cholesterol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hdl Cholesterol"
+          },
+          "on_bp_medication": {
+            "type": "boolean",
+            "title": "On Bp Medication",
+            "default": false
+          },
+          "smoking_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smoking Status"
+          },
+          "alcohol_use": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Use"
+          },
+          "physical_activity_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Physical Activity Level"
+          },
+          "assessment_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment Notes"
+          },
+          "blood_pressures": {
+            "items": {
+              "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__BloodPressureRead"
+            },
+            "type": "array",
+            "title": "Blood Pressures",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at"
+        ],
+        "title": "HealthAssessmentSummary"
+      },
+      "HeartRateCreate": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 20,
+            "title": "Value"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/HeartRateUnit",
+            "default": "beats/min"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Date Time"
+          },
+          "end_date_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date Time"
+          },
+          "descriptive_statistic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DescriptiveStatistic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_physical_activity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationship"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_sleep": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationshipToSleep"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "body_posture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BodyPosture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "start_date_time"
+        ],
+        "title": "HeartRateCreate"
+      },
+      "HeartRateRead": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 20,
+            "title": "Value"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/HeartRateUnit",
+            "default": "beats/min"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Date Time"
+          },
+          "end_date_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date Time"
+          },
+          "descriptive_statistic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DescriptiveStatistic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_physical_activity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationship"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_sleep": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationshipToSleep"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "body_posture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BodyPosture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "start_date_time",
+          "id",
+          "user_id"
+        ],
+        "title": "HeartRateRead"
+      },
+      "HeartRateUnit": {
+        "type": "string",
+        "enum": [
+          "beats/min"
+        ],
+        "title": "HeartRateUnit"
+      },
+      "HeartRateValueRead": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "HeartRateValueRead"
+      },
+      "HighRiskPatientResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "patients": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSummary"
+            },
+            "type": "array",
+            "title": "Patients"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "patients"
+        ],
+        "title": "HighRiskPatientResponse",
+        "description": "Response for GET /clinicians/me/patients?risk=high"
+      },
+      "MeasurementLocation": {
+        "type": "string",
+        "enum": [
+          "left wrist",
+          "right wrist",
+          "left arm",
+          "right arm"
+        ],
+        "title": "MeasurementLocation"
+      },
+      "PatientDetailResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__UserProfileRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HealthAssessmentSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment_count": {
+            "type": "integer",
+            "title": "Assessment Count",
+            "default": 0
+          },
+          "risk_cards": {
+            "items": {
+              "$ref": "#/components/schemas/RiskCardSummary"
+            },
+            "type": "array",
+            "title": "Risk Cards",
+            "default": []
+          },
+          "overall_risk_percent": {
+            "type": "number",
+            "title": "Overall Risk Percent",
+            "default": 0
+          },
+          "overall_risk_label": {
+            "type": "string",
+            "title": "Overall Risk Label",
+            "default": "No data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "title": "PatientDetailResponse"
+      },
+      "PatientSearchResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSummary"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "total",
+          "results"
+        ],
+        "title": "PatientSearchResponse"
+      },
+      "PatientSummary": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "overall_risk_percent": {
+            "type": "number",
+            "title": "Overall Risk Percent",
+            "default": 0
+          },
+          "overall_risk_label": {
+            "type": "string",
+            "title": "Overall Risk Label",
+            "default": "No data"
+          },
+          "risk_cards": {
+            "items": {
+              "$ref": "#/components/schemas/RiskCardSummary"
+            },
+            "type": "array",
+            "title": "Risk Cards",
+            "default": []
+          },
+          "last_assessed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Assessed"
+          },
+          "linked_since": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked Since"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "full_name"
+        ],
+        "title": "PatientSummary",
+        "description": "Compact row for patient lists and search results."
+      },
+      "PhysicalActivity": {
+        "type": "string",
+        "enum": [
+          "none",
+          "low",
+          "moderate",
+          "high"
+        ],
+        "title": "PhysicalActivity"
+      },
+      "PredictionError": {
+        "properties": {
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage",
+            "description": "'feature_engineering' | 'model_load' | 'inference' | 'persistence'"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error"
+          },
+          "features_used": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Features Used"
+          }
+        },
+        "type": "object",
+        "required": [
+          "disease",
+          "stage",
+          "error"
+        ],
+        "title": "PredictionError",
+        "description": "Details of a per-disease failure — returned alongside partial results."
+      },
+      "PredictionRequest": {
+        "properties": {
+          "diseases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diseases",
+            "description": "Subset of ['cvd', 'hyp', 'chd', 'stroke']. None = run all."
+          }
+        },
+        "type": "object",
+        "title": "PredictionRequest",
+        "description": "Trigger predictions for one or all diseases for the current user."
+      },
+      "PredictionResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "predicted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Predicted At"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/DiseasePredictionResult"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/PredictionError"
+            },
+            "type": "array",
+            "title": "Errors",
+            "description": "Partial failures — populated when one or more diseases failed. Empty on full success."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "predicted_at",
+          "results"
+        ],
+        "title": "PredictionResponse"
+      },
+      "PrescriptionListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "prescriptions": {
+            "items": {
+              "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__PrescriptionRead"
+            },
+            "type": "array",
+            "title": "Prescriptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "prescriptions"
+        ],
+        "title": "PrescriptionListResponse"
+      },
+      "PrescriptionStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "completed",
+          "cancelled",
+          "expired"
+        ],
+        "title": "PrescriptionStatus"
+      },
+      "RiskAssessmentExplainabilityRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "risk_assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Risk Assessment Id"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendation"
+          },
+          "clinical_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinical Summary"
+          },
+          "lime_explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lime Explanation"
+          },
+          "inference_time_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inference Time Ms"
+          },
+          "parsed_top_risk_factors": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Parsed Top Risk Factors",
+            "readOnly": true
+          },
+          "parsed_shap_values": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Parsed Shap Values",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "risk_assessment_id",
+          "parsed_top_risk_factors",
+          "parsed_shap_values"
+        ],
+        "title": "RiskAssessmentExplainabilityRead"
+      },
+      "RiskAssessmentResultRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score"
+          },
+          "risk_percentage": {
+            "type": "number",
+            "title": "Risk Percentage"
+          },
+          "risk_label": {
+            "type": "string",
+            "title": "Risk Label"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "predicted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Predicted At"
+          },
+          "explainability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RiskAssessmentExplainabilityRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "disease",
+          "risk_score",
+          "risk_percentage",
+          "risk_label",
+          "model_version",
+          "predicted_at"
+        ],
+        "title": "RiskAssessmentResultRead"
+      },
+      "RiskCardSummary": {
+        "properties": {
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score"
+          },
+          "risk_label": {
+            "type": "string",
+            "title": "Risk Label"
+          },
+          "risk_percent": {
+            "type": "number",
+            "title": "Risk Percent"
+          },
+          "color_hint": {
+            "type": "string",
+            "title": "Color Hint"
+          },
+          "last_assessed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Assessed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "disease",
+          "display_name",
+          "risk_score",
+          "risk_label",
+          "risk_percent",
+          "color_hint"
+        ],
+        "title": "RiskCardSummary"
+      },
+      "SmokingStatus": {
+        "type": "string",
+        "enum": [
+          "never",
+          "former",
+          "passive",
+          "current_light",
+          "current_heavy"
+        ],
+        "title": "SmokingStatus"
+      },
+      "TemporalRelationship": {
+        "type": "string",
+        "enum": [
+          "before exercise",
+          "after exercise",
+          "during exercise",
+          "at rest"
+        ],
+        "title": "TemporalRelationship"
+      },
+      "TemporalRelationshipToSleep": {
+        "type": "string",
+        "enum": [
+          "before sleep",
+          "during sleep",
+          "after sleep"
+        ],
+        "title": "TemporalRelationshipToSleep"
+      },
+      "UserCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active",
+            "default": true
+          },
+          "is_superuser": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Superuser",
+            "default": false
+          },
+          "is_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Verified",
+            "default": false
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "role"
+        ],
+        "title": "UserCreate"
+      },
+      "UserProfileCreate": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth"
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "work_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Type"
+          },
+          "education": {
+            "$ref": "#/components/schemas/EducationLevel"
+          },
+          "diabetes": {
+            "type": "boolean",
+            "title": "Diabetes",
+            "default": false
+          },
+          "heart_disease": {
+            "type": "boolean",
+            "title": "Heart Disease",
+            "default": false
+          },
+          "history_cvd": {
+            "type": "boolean",
+            "title": "History Cvd",
+            "default": false
+          },
+          "kidney_disease": {
+            "type": "boolean",
+            "title": "Kidney Disease",
+            "default": false
+          },
+          "prevalent_stroke": {
+            "type": "boolean",
+            "title": "Prevalent Stroke",
+            "default": false
+          },
+          "prevalent_hypertension": {
+            "type": "boolean",
+            "title": "Prevalent Hypertension",
+            "default": false
+          },
+          "bp_history": {
+            "$ref": "#/components/schemas/BpHistory"
+          },
+          "family_history_htn": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family History Htn"
+          },
+          "family_history_cvd": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family History Cvd"
+          },
+          "smoking": {
+            "$ref": "#/components/schemas/SmokingStatus"
+          },
+          "cigs_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cigs Per Day"
+          },
+          "alcohol_use": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlcoholUse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physical_activity_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhysicalActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exercise_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exercise Frequency"
+          },
+          "diet_quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diet Quality"
+          },
+          "salt_intake": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salt Intake"
+          },
+          "stress_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stress Score"
+          },
+          "sleep_duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sleep Duration"
+          },
+          "sleep_quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sleep Quality"
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "sex",
+          "education",
+          "bp_history",
+          "smoking"
+        ],
+        "title": "UserProfileCreate"
+      },
+      "UserProfileUpdate": {
+        "properties": {
+          "smoking": {
+            "$ref": "#/components/schemas/SmokingStatus"
+          },
+          "diabetes": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diabetes"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number"
+          }
+        },
+        "type": "object",
+        "required": [
+          "smoking"
+        ],
+        "title": "UserProfileUpdate"
+      },
+      "UserRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "is_superuser": {
+            "type": "boolean",
+            "title": "Is Superuser",
+            "default": false
+          },
+          "is_verified": {
+            "type": "boolean",
+            "title": "Is Verified",
+            "default": false
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "role"
+        ],
+        "title": "UserRead"
+      },
+      "UserRole": {
+        "type": "string",
+        "enum": [
+          "patient",
+          "clinician",
+          "admin"
+        ],
+        "title": "UserRole"
+      },
+      "UserUpdate": {
+        "properties": {
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "is_superuser": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Superuser"
+          },
+          "is_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Verified"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "UserUpdate"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "fastapi_backend__app__appointments__schemas__AppointmentListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "total_pages": {
+            "type": "integer",
+            "title": "Total Pages"
+          },
+          "appointments": {
+            "items": {
+              "$ref": "#/components/schemas/fastapi_backend__app__appointments__schemas__AppointmentRead"
+            },
+            "type": "array",
+            "title": "Appointments"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "page_size",
+          "total_pages",
+          "appointments"
+        ],
+        "title": "AppointmentListResponse"
+      },
+      "fastapi_backend__app__appointments__schemas__AppointmentRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id"
+          },
+          "clinician_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinician Name"
+          },
+          "clinician_specialization": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinician Specialization"
+          },
+          "hospital_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Name"
+          },
+          "appointment_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Appointment Date"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "clinician_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinician Notes"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AppointmentStatus"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "meeting_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Link"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "clinician_profile_id",
+          "appointment_date",
+          "status",
+          "is_virtual",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AppointmentRead"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__AppointmentListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "total_pages": {
+            "type": "integer",
+            "title": "Total Pages"
+          },
+          "appointments": {
+            "items": {
+              "$ref": "#/components/schemas/fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead"
+            },
+            "type": "array",
+            "title": "Appointments"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "page_size",
+          "total_pages",
+          "appointments"
+        ],
+        "title": "AppointmentListResponse"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__AppointmentRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id"
+          },
+          "appointment_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Appointment Date"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "clinician_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinician Notes"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AppointmentStatus"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "meeting_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Link"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "patient_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Name"
+          },
+          "patient_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "clinician_profile_id",
+          "appointment_date",
+          "status",
+          "is_virtual",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AppointmentRead"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__BloodPressureRead": {
+        "properties": {
+          "systolic_value": {
+            "type": "number",
+            "title": "Systolic Value"
+          },
+          "diastolic_value": {
+            "type": "number",
+            "title": "Diastolic Value"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Date Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "systolic_value",
+          "diastolic_value",
+          "start_date_time"
+        ],
+        "title": "BloodPressureRead"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__PrescriptionCreate": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "medication_name": {
+            "type": "string",
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "type": "string",
+            "title": "Dosage"
+          },
+          "frequency": {
+            "type": "string",
+            "title": "Frequency"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "refills": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Refills",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "patient_id",
+          "medication_name",
+          "dosage",
+          "frequency"
+        ],
+        "title": "PrescriptionCreate"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__PrescriptionRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id"
+          },
+          "medication_name": {
+            "type": "string",
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "type": "string",
+            "title": "Dosage"
+          },
+          "frequency": {
+            "type": "string",
+            "title": "Frequency"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "refills": {
+            "type": "integer",
+            "title": "Refills"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Issued At"
+          },
+          "patient_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "clinician_profile_id",
+          "medication_name",
+          "dosage",
+          "frequency",
+          "refills",
+          "issued_at"
+        ],
+        "title": "PrescriptionRead"
+      },
+      "fastapi_backend__app__clinician_dashboard__schemas__UserProfileRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "date_of_birth": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Of Birth"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "education": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Education"
+          },
+          "work_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id"
+        ],
+        "title": "UserProfileRead"
+      },
+      "fastapi_backend__app__health_data__schemas__BloodPressureRead": {
+        "properties": {
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Date Time"
+          },
+          "end_date_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date Time"
+          },
+          "descriptive_statistic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DescriptiveStatistic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_physical_activity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationship"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temporal_relationship_to_sleep": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemporalRelationshipToSleep"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "body_posture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BodyPosture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "systolic_value": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 50,
+            "title": "Systolic Value"
+          },
+          "diastolic_value": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 30,
+            "title": "Diastolic Value"
+          },
+          "systolic_unit": {
+            "$ref": "#/components/schemas/BloodPressureUnit",
+            "default": "mmHg"
+          },
+          "diastolic_unit": {
+            "$ref": "#/components/schemas/BloodPressureUnit",
+            "default": "mmHg"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_date_time",
+          "systolic_value",
+          "diastolic_value",
+          "id",
+          "user_id"
+        ],
+        "title": "BloodPressureRead"
+      },
+      "fastapi_backend__app__prescription__schemas__PrescriptionCreate": {
+        "properties": {
+          "medication_name": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Dosage"
+          },
+          "frequency": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Frequency"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "refills": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Refills",
+            "default": 0
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PrescriptionStatus",
+            "default": "active"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "medication_name",
+          "dosage",
+          "frequency",
+          "patient_id",
+          "clinician_profile_id"
+        ],
+        "title": "PrescriptionCreate"
+      },
+      "fastapi_backend__app__prescription__schemas__PrescriptionRead": {
+        "properties": {
+          "medication_name": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Dosage"
+          },
+          "frequency": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Frequency"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "refills": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Refills",
+            "default": 0
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "clinician_profile_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Clinician Profile Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PrescriptionStatus"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Issued At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "medication_name",
+          "dosage",
+          "frequency",
+          "id",
+          "patient_id",
+          "clinician_profile_id",
+          "status",
+          "issued_at"
+        ],
+        "title": "PrescriptionRead"
+      },
+      "fastapi_backend__app__user_profile__schemas__UserProfileRead": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth"
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "work_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Type"
+          },
+          "education": {
+            "$ref": "#/components/schemas/EducationLevel"
+          },
+          "diabetes": {
+            "type": "boolean",
+            "title": "Diabetes",
+            "default": false
+          },
+          "heart_disease": {
+            "type": "boolean",
+            "title": "Heart Disease",
+            "default": false
+          },
+          "history_cvd": {
+            "type": "boolean",
+            "title": "History Cvd",
+            "default": false
+          },
+          "kidney_disease": {
+            "type": "boolean",
+            "title": "Kidney Disease",
+            "default": false
+          },
+          "prevalent_stroke": {
+            "type": "boolean",
+            "title": "Prevalent Stroke",
+            "default": false
+          },
+          "prevalent_hypertension": {
+            "type": "boolean",
+            "title": "Prevalent Hypertension",
+            "default": false
+          },
+          "bp_history": {
+            "$ref": "#/components/schemas/BpHistory"
+          },
+          "family_history_htn": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family History Htn"
+          },
+          "family_history_cvd": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family History Cvd"
+          },
+          "smoking": {
+            "$ref": "#/components/schemas/SmokingStatus"
+          },
+          "cigs_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cigs Per Day"
+          },
+          "alcohol_use": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlcoholUse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physical_activity_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhysicalActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exercise_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exercise Frequency"
+          },
+          "diet_quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diet Quality"
+          },
+          "salt_intake": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salt Intake"
+          },
+          "stress_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stress Score"
+          },
+          "sleep_duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sleep Duration"
+          },
+          "sleep_quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sleep Quality"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "sex",
+          "education",
+          "bp_history",
+          "smoking",
+          "id",
+          "user_id",
+          "email",
+          "age",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "UserProfileRead"
+      },
+      "login": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "password"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_auth-auth:jwt.login"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "auth/jwt/login"
+          }
+        }
+      }
+    }
+  }
+}
