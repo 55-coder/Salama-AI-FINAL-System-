@@ -29,7 +29,7 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
   const [dob, setDob] = useState('1973-05-15');
   const [sex, setSex] = useState<'male' | 'female' | 'other'>('female');
 
-  const [smoking, setSmoking] = useState<'never' | 'former' | 'smoker' | 'unknown' | 'never_smoked' | 'passive' | 'current_light' | 'current_heavy'>('never_smoked');
+  const [smoking, setSmoking] = useState<'never' | 'former' | 'passive' | 'current_light' | 'current_heavy'>('never');
   const [diabetes, setDiabetes] = useState(false);
   const [bpHistory, setBpHistory] = useState<'normal' | 'prehypertension' | 'hypertension'>('hypertension');
   const [familyHtn, setFamilyHtn] = useState(false);
@@ -528,10 +528,8 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
                     onChange={(e: any) => setSmoking(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-slate-800 font-semibold bg-white"
                   >
-                    <option value="never_smoked">Never Smoked</option>
+                    <option value="never">Never Smoked</option>
                     <option value="former">Former Smoker</option>
-                    <option value="smoker">Active Smoker</option>
-                    <option value="unknown">Unknown</option>
                     <option value="passive">Passive Smoker / Exposed</option>
                     <option value="current_light">Current Light Smoker</option>
                     <option value="current_heavy">Current Heavy Smoker</option>

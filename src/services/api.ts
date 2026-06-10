@@ -21,7 +21,7 @@ export interface UserProfile {
   date_of_birth: string;
   sex: 'male' | 'female' | 'other';
   // Behavioral Risk Markers
-  smoking: 'never' | 'former' | 'smoker' | 'unknown' | 'never_smoked' | 'passive' | 'current_light' | 'current_heavy'; 
+  smoking: 'never' | 'former' | 'passive' | 'current_light' | 'current_heavy'; 
   diabetes: boolean;
   history_cvd?: boolean;
   kidney_disease?: boolean;
@@ -83,7 +83,7 @@ export interface HealthAssessmentRecord {
   risk_score?: number; // Calculated
   taking_bp_medication?: boolean;
   medication_type?: 'none' | 'beta_blocker' | 'diuretic' | 'ace_inhibitor' | 'other' | null;
-  smoking_status?: 'never' | 'former' | 'smoker' | 'unknown' | 'never_smoked' | 'passive' | 'current_light' | 'current_heavy' | null;
+  smoking_status?: 'never' | 'former' | 'passive' | 'current_light' | 'current_heavy' | null;
   cigs_per_day?: number | null;
   alcohol_use?: 'none' | 'moderate' | 'heavy' | null;
   physical_activity_level?: 'none' | 'low' | 'moderate' | 'high' | 'light' | 'heavy' | null;
@@ -230,7 +230,7 @@ export class SalamaDatabase {
         phone_number: '0712345678',
         date_of_birth: '1990-01-01',
         sex: 'other',
-        smoking: 'never_smoked',
+        smoking: 'never',
         diabetes: false,
         bp_history: 'normal',
         physical_activity_level: 'moderate',
@@ -314,7 +314,7 @@ export class SalamaDatabase {
     const latestHr = hrList[0];
 
     const isHighBp = latestBp ? (latestBp.systolic_value > 140 || latestBp.diastolic_value > 90) : false;
-    const isSmoker = profile.smoking === 'smoker';
+    const isSmoker = profile.smoking === 'current_light' || profile.smoking === 'current_heavy';
     const isDiabetic = profile.diabetes;
     const weight = latestHa?.weight_kg || 70;
     const height = latestHa?.height_m || 1.75;
@@ -1044,7 +1044,7 @@ export class SalamaApiService {
           phone_number: rawProfile.phone_number || '0712345678',
           date_of_birth: rawProfile.date_of_birth || '1980-01-01',
           sex: rawProfile.sex || p.sex || 'female',
-          smoking: rawProfile.smoking || 'never_smoked',
+          smoking: rawProfile.smoking || 'never',
           diabetes: rawProfile.diabetes ?? false,
           bp_history: rawProfile.bp_history || 'normal',
           physical_activity_level: rawProfile.physical_activity_level || 'moderate',
