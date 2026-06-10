@@ -717,7 +717,7 @@ export class SalamaApiService {
   static async saveProfile(email: string, profile: UserProfile): Promise<UserProfile> {
     try {
       const existing = await this.getProfile(email).catch(() => null);
-      const method = existing ? 'PUT' : 'POST';
+      const method = existing ? 'POST' : 'PUT';
       const result = await this.request<UserProfile>('/profile/profiles/', {
         method,
         body: JSON.stringify(profile)
