@@ -202,7 +202,6 @@ export default function HealthDataForms({ user, onScanCompleted }: HealthDataFor
         phone_number: phone || null,
         date_of_birth: dob,
         sex,
-        age_years: dob ? (new Date().getFullYear() - new Date(dob).getFullYear()) : 52,
         smoking,
         diabetes,
         bp_history: bpHistory,

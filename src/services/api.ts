@@ -230,7 +230,6 @@ export class SalamaDatabase {
         phone_number: '0712345678',
         date_of_birth: '1990-01-01',
         sex: 'other',
-        age_years: 36,
         smoking: 'never_smoked',
         diabetes: false,
         bp_history: 'normal',
@@ -310,6 +309,7 @@ export class SalamaDatabase {
     const latestBp = bpList[0];
     const haList = SalamaDatabase.getHealthAssessments(email);
     const latestHa = haList[0];
+    const age = profile.date_of_birth ? (new Date().getFullYear() - new Date(profile.date_of_birth).getFullYear()) : 40;
     const hrList = SalamaDatabase.getHrRecords(email);
     const latestHr = hrList[0];
 
@@ -327,7 +327,7 @@ export class SalamaDatabase {
 
     // --- CVD Risk & SHAP Formula ---
     let cvd = 15;
-    if (profile.age_years && profile.age_years > 50) cvd += 15;
+    if (age > 50) cvd += 15;
     if (isHighBp) cvd += 20;
     if (isSmoker) cvd += 12;
     if (isDiabetic) cvd += 10;
@@ -335,7 +335,7 @@ export class SalamaDatabase {
     cvd = Math.max(5, Math.min(98, cvd));
 
     const shap_cvd: Record<string, number> = {
-      'Age Baseline Contribution': profile.age_years ? Math.min(20, Math.floor(profile.age_years / 3)) : 10,
+      'Age Baseline Contribution': Math.min(20, Math.floor(age / 3)),
       'Blood Pressure Trend': isHighBp ? 25 : 5,
       'Cholesterol Contribution': (cholVal > 200) ? 12 : 4,
       'Glucose Levels': isDiabetic ? 14 : 3,
@@ -348,7 +348,7 @@ export class SalamaDatabase {
     let htn = 25;
     if (isHighBp) htn += 40;
     if (profile.bp_history === 'hypertension') htn += 25;
-    if (profile.age_years && profile.age_years > 45) htn += 12;
+    if (age > 45) htn += 12;
     if (bmi > 26) htn += 10;
     if (profile.sleep_quality === 'Poor') htn += 8;
     htn = Math.max(10, Math.min(99.9, htn));
@@ -356,7 +356,7 @@ export class SalamaDatabase {
     const shap_hypertension: Record<string, number> = {
       'Systolic BP Load': latestBp ? Math.min(40, Math.max(5, Math.floor((latestBp.systolic_value - 120) * 0.8))) : 10,
       'Diastolic BP Load': latestBp ? Math.min(20, Math.max(2, Math.floor((latestBp.diastolic_value - 80) * 0.6))) : 5,
-      'Age Stiffness Coefficient': profile.age_years ? Math.min(15, Math.floor(profile.age_years / 4)) : 8,
+      'Age Stiffness Coefficient': Math.min(15, Math.floor(age / 4)),
       'Body Mass Index': bmi > 25 ? 9 : -1,
       'History of Hypertension': profile.bp_history === 'hypertension' ? 20 : 0,
       'Stress Index Contribution': profile.stress_score ? Math.floor(profile.stress_score * 1.5) : 4
@@ -364,7 +364,7 @@ export class SalamaDatabase {
 
     // --- Stroke Risk & SHAP Formula ---
     let stroke = 8;
-    if (profile.age_years && profile.age_years > 55) stroke += 10;
+    if (age > 55) stroke += 10;
     if (isHighBp) stroke += 15;
     if (isDiabetic) stroke += 12;
     if (gluVal > 110) stroke += 8;
@@ -372,7 +372,7 @@ export class SalamaDatabase {
     stroke = Math.max(3, Math.min(92, stroke));
 
     const shap_stroke: Record<string, number> = {
-      'Age-associated Vascular stiffness': profile.age_years ? Math.min(18, Math.floor(profile.age_years / 4)) : 8,
+      'Age-associated Vascular stiffness': Math.min(18, Math.floor(age / 4)),
       'Systolic Hypertension Load': isHighBp ? 20 : 4,
       'Active Blood Glucose': gluVal > 100 ? 12 : -3,
       'Active Smoking Status': isSmoker ? 15 : -4,
@@ -394,7 +394,7 @@ export class SalamaDatabase {
       'Chronic BP Elevation': isHighBp ? 12 : 2,
       'Body Mass Index Index': bmi > 26 ? 6 : -1,
       'Sleep Disruption Load': profile.sleep_quality === 'Poor' ? 8 : -2,
-      'Age Gradient': profile.age_years ? Math.min(12, Math.floor(profile.age_years / 5)) : 5
+      'Age Gradient': Math.min(12, Math.floor(age / 5))
     };
 
     const notes = cvd > 60 
@@ -1044,7 +1044,6 @@ export class SalamaApiService {
           phone_number: rawProfile.phone_number || '0712345678',
           date_of_birth: rawProfile.date_of_birth || '1980-01-01',
           sex: rawProfile.sex || p.sex || 'female',
-          age_years: rawProfile.age_years || p.age || 40,
           smoking: rawProfile.smoking || 'never_smoked',
           diabetes: rawProfile.diabetes ?? false,
           bp_history: rawProfile.bp_history || 'normal',
